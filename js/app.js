@@ -18,25 +18,61 @@ function otherText() {
 		otherTextField.focus();
 		//remove other text box if not selected
 	} else if (jobRoleSelect.val() != "other")  {
-			$('#other-title').remove();
+		$('#other-title').remove();
 	}
+}
+
+// For the T-Shirt color menu, only display the color options that match the design selected in the "Design" menu.
+function showHideColor() {
+	const colorOption = $('#color > option');
+	const jsPuns = colorOption.slice(0,3);
+	const heartJS = colorOption.slice(3,6);
+	function showHide(showArray, hideArray) {
+		colorOption.hide();
+		showArray.show();
+		showArray[0].setAttribute('selected', 'selected');
+		hideArray.hide();
+	}
+	if ($('#design').val() === 'Select Theme') {
+		$('#colors-js-puns').hide();
+	} else {
+		$('#colors-js-puns').show();
+	}
+	if ($('#design').val() === 'js puns')  {
+		showHide(jsPuns, heartJS);
+	} else if ($('#design').val() === 'heart js')  {
+		showHide(heartJS, jsPuns);
+	}
+}
+
+//activities
+function findDayTime() {
+	const activities = $('.activities > label');
+	const dayAndTime; 
+	console.log(day + ' ' + time);
+
+	//disable checkbox checkbox.prop('disabled', true)
 }
 
 //on document ready focus on first text input. If other is already selected load other text box
 $(document).ready(function() {
 	firstText.focus();
 	otherText();
+	showHideColor();
 });
 
 //A text field that will be revealed when the "Other" option is selected from the "Job Role" drop down menu.
 jobRoleSelect.on('change', function (e) {
 	otherText();
 });
-//Give the field an id of “other-title,” and add the placeholder text of "Your Job Role" to the field.
 
 
-    // For the T-Shirt color menu, only display the color options that match the design selected in the "Design" menu.
+$('#design').on('change', function(){
+	showHideColor();
+});
 
-    // If the user selects "Theme - JS Puns" then the color menu should only display "Cornflower Blue," "Dark Slate Grey," and "Gold."
+
+//form saves to browser for refresh
+
     
-    // If the user selects "Theme - I ♥ JS" then the color menu should only display "Tomato," "Steel Blue," and "Dim Grey."
+   
