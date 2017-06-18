@@ -4,21 +4,36 @@ const textInput = $('[type=text]');
 const firstText = form.children().children().first(textInput);
 const jobRoleSelect = $('#title');
 const paymentField = $('#payment');
-const otherTextField = $('#other-title');
+const otherTextField = $('#other-title');	
+const allCheckBoxes = $('input[type=checkbox]');
+const jsFrameworks = $('input[name=js-frameworks]');
+const jsLibs = $('input[name=js-libs]');
+const express = $('input[name=express]');
+const mainConference = $('input[name=all]');
+const buildTools = $('input[name=build-tools]');
+const npm = $('input[name=npm]');
 
-//show or hide other-title text field
+
+/**********************************************************
+JOB ROLE FUNCTION - show or hide other-title text field
+**********************************************************/
+
 function otherText() {
 	if (jobRoleSelect.val() != "other") {
 		//had originally created text field using javascript but tutor told us to hardcode it to the HTML
 		otherTextField.hide();
-	//show other-title if selected
+		//show other-title if selected
 	} else if (jobRoleSelect.val() === "other")  {
 		otherTextField.show();
 		otherTextField.focus();
 	}
 }
 
-// For the T-Shirt color menu, only display the color options that match the design selected in the "Design" menu.
+/**************************************************************************************************************
+TSHIRT INFO SECTION 
+For the T-Shirt color menu, only display the color options that match the design selected in the "Design" menu
+**************************************************************************************************************/
+
 function showHideColor() {
 	const colorOption = $('#color > option');
 	const jsPuns = colorOption.slice(0,3);
@@ -42,31 +57,51 @@ function showHideColor() {
 	}
 }
 
-//activities
-function findDayTime() {
-	const activities = $('.activities > label');
-	const matchingAM = /Tuesday 9am-12pm/g;
-	const matchingPM = /Tuesday 1pm-4pm/g;
-	const amArray = [];
-	const pmArray = [];
-	//loop over each activities text
+/********************
+ACTIVITIES FUNCTIONS
+*********************/
 
-	for(let i = 0; i <= activities.length; i +=	1){
-		const testAM = matchingAM.test(activities[i].textContent);
-		const testPM = matchingPM.test(activities[i].textContent);
-		if (testAM === true) {
-			console.log(activities[i]);
-		}
-		if (testPM === true) {
-			console.log(activities[i]);
-		}	
+/******************************************
+Activities - disable conflicting activities
+*******************************************/
+
+function disableConflictingActivities() {
+
+	//function disables checkbox if an activity with a conflicting activity is selected
+	function disableCheckbox(matchingCheck1, matchingCheck2) {
+		if(matchingCheck1.is(':checked') === true) {
+			matchingCheck2.prop('checked',false);
+			matchingCheck2.prop('disabled', true);
+		} else if (matchingCheck1.is(':checked') === false) {
+			matchingCheck2.prop('disabled', false);
+		}		
 	}
-	//disable checkbox checkbox.prop('disabled', true)
+	disableCheckbox(jsFrameworks, express);
+	disableCheckbox(express, jsFrameworks);
+	disableCheckbox(jsLibs, node);
+	disableCheckbox(node, jsLibs);
 }
 
-/*    PAYMENTS 
-	If payment method isn't selected, hide payments   */
+/**********************************
+Activities - display running total
+**********************************/
 
+function activitiesTotal() {
+	const getTotal = () => {
+		let runningTotal;
+		//if mainConference is selected running total +$200
+		if()
+	};
+	//create total section and append to activies fieldset
+	let totalDiv = '<h3>Total: ';
+	totalDiv += '$100';
+	totalDiv += '</h3>';
+	$('.activities').append(totalDiv);
+}
+
+/**************************************************************************
+PAYMENTS - Toggle payment method visability according to payment selected
+***************************************************************************/
 
 function showHidePayment() {
 	const paymentVal = $('#payment').val();
@@ -88,28 +123,45 @@ function showHidePayment() {
 	} else if (paymentVal === 'bitcoin') {
 		showHidePaymentDiv(bitcoinMethod);
 	}
-
 }
 
-function onChange(object, functionName) {
-	object.on('change', function (e) {
-		functionName();
-	});
-}
-
-//on document ready focus on first text input. If other is already selected load other text box
+/****************************************
+FUNCTIONS TO BE CALLED ON DOCUMENT READY
+****************************************/
 $(document).ready(function() {
 	firstText.focus();
 	otherText();
 	showHideColor();
 	showHidePayment();
+	disableConflictingActivities();
 });
 
+/********************************
+FUNCTIONS TO BE CALLED ON CHANGE
+********************************/
+//function to call functions on change
+function onChange(object, functionName) {
+	object.on('change', function (e) {
+		functionName();
+	});
+}
+//functions to be performed when a change is detected on the form
 onChange(jobRoleSelect, otherText);
 onChange($('#design'), showHideColor);
 onChange($('#payment'), showHidePayment);
-
+onChange((allCheckBoxes), disableConflictingActivities);
+onChange((allCheckBoxes), activitiesTotal);
 
 //form saves to browser for refresh
+
+
+const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+
+
+
+
+
+
 
 
