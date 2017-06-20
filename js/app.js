@@ -1,6 +1,11 @@
-const form = $('form'); 
-const textInput = $('[type=text]');
-const firstText = form.children().children().first(textInput);
+const firstText = $('#name');
+const regExpName = /\w\s\w/g;
+const nameLabel = $('label[for="name"]');
+const namePrompt = '<p style="color:red">Please enter your full name</p>';
+const emailText = $('input[type="email"]');
+const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g;
+const emailPrompt = '<p style="color:red">Please enter a valid email address</p>';
+const emailLabel = $('label[for="mail"]');
 const jobRoleSelect = $('#title');
 const paymentField = $('#payment');
 const otherTextField = $('#other-title');
@@ -12,6 +17,7 @@ const node = $('input[name=node]');
 const mainConference = $('input[name=all]');
 const buildTools = $('input[name=build-tools]');
 const npm = $('input[name=npm]');
+const cardNumber = $('#cc-num');
 
 
 /**********************************************************
@@ -20,9 +26,7 @@ JOB ROLE FUNCTION - show or hide other-title text field
 
 function otherText() {
 	if (jobRoleSelect.val() != "other") {
-		//had originally created text field using javascript but tutor told us to hardcode it to the HTML
 		otherTextField.hide();
-		//show other-title if selected
 	} else if (jobRoleSelect.val() === "other")  {
 		otherTextField.show();
 		otherTextField.focus();
@@ -144,16 +148,45 @@ function showHidePayment() {
 
 /****************
  FORM VALIDATION 
-*****************/
+ *****************/
 
-//NAME FIELD
+ function invalidField(input) {
+ 	input.removeClass('valid');
+	input.addClass('invalid');
+	$('button[type=submit]').prop('disabled', true);
+ }
+ function validField(input){
+ 	input.removeClass('invalid');
+	input.addClass('valid');
+	$('button[type=submit]').prop('disabled', false);
+ }
 
-//EMAIL FIELD
-const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+//text input validation function
+function textInputValidate(textInput, regex) {
+	textInput.on('focusout', function(){
+		if(regex.test(textInput.val()) === false || textInput.val().length === 0) {
+			invalidField(textInput);
+		} else {
+			validField(textInput);
+		}
+	});
+}
+//Validate Name Field
+textInputValidate(firstText, regExpName);
+//Validate Email Field
+textInputValidate(emailText, emailRegExp);
 
 //AT LEAST ONE CHECKBOX SELECTED
 
 //IF CREDITCARD
+function cardValidation() {
+	if (cardNumber.val().length < 13 || cardNumber.val().length > 16) {
+		invalidField(cardNumber);
+	} 
+	else {
+		validField(cardNumber);
+	}
+}
 	//ALL FIELDS FILLED OUT
 	//CARD NUMBER BETWEEN 13 AND 16
 	//ZIPCODE FIELD 5 DIGIT NUMBER
@@ -161,22 +194,22 @@ const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"
 
 
 
-
 /******************************************
  FUNCTIONS TO BE CALLED WHEN DOCUMENT READY
-******************************************/
-$(document).ready(function() {
-	firstText.focus();
-	otherText();
-	showHideColor();
-	showHidePayment();
-	disableConflictingActivities();
-	activitiesTotal();
-});
+ ******************************************/
+ $(document).ready(function() {
+ 	firstText.focus();
+ 	otherText();
+ 	showHideColor();
+ 	showHidePayment();
+ 	disableConflictingActivities();
+ 	activitiesTotal();
+ 	cardValidation();
+ });
 
 /********************************
  FUNCTIONS TO BE CALLED ON CHANGE
-********************************/
+ ********************************/
 
 //function to call functions on change
 function onChange(object, functionName) {
@@ -188,8 +221,10 @@ function onChange(object, functionName) {
 onChange(jobRoleSelect, otherText);
 onChange($('#design'), showHideColor);
 onChange($('#payment'), showHidePayment);
-onChange((allCheckBoxes), disableConflictingActivities);
-onChange((allCheckBoxes), activitiesTotal);
+onChange(allCheckBoxes, disableConflictingActivities);
+onChange(allCheckBoxes, activitiesTotal);
+onChange(cardNumber, cardValidation);
+
 
 
 

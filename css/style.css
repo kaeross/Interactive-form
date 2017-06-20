@@ -179,3 +179,15 @@ button:hover {
 		width: 49%;
 	}
 }
+
+
+/* ================================= 
+  Form Validation Styles
+==================================== */
+
+.invalid {
+	border: 2px solid red;
+}
+.valid {
+	border: 2px solid mediumseagreen;
+}
