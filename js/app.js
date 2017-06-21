@@ -305,6 +305,8 @@ $('button').on('click', function(e){
 			left: 0, 
 			behavior: 'smooth' 
 		});
+	} else {
+		alert('Success! Thank you for submitting this form.');
 	}
 });
 
