@@ -1,10 +1,9 @@
 const firstText = $('#name');
+const firstFieldset = $('fieldset:first');
 const regExpName = /\w\s\w/g;
 const nameLabel = $('label[for="name"]');
-const namePrompt = '<p style="color:red">Please enter your full name</p>';
 const emailText = $('input[type="email"]');
 const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g;
-const emailPrompt = '<p style="color:red">Please enter a valid email address</p>';
 const emailLabel = $('label[for="mail"]');
 const jobRoleSelect = $('#title');
 const paymentField = $('#payment');
@@ -18,6 +17,8 @@ const mainConference = $('input[name=all]');
 const buildTools = $('input[name=build-tools]');
 const npm = $('input[name=npm]');
 const cardNumber = $('#cc-num');
+const zipCode = $('#zip');
+const cvv = $('#cvv');
 
 
 /**********************************************************
@@ -147,51 +148,91 @@ function showHidePayment() {
 }
 
 /****************
- FORM VALIDATION 
- *****************/
-
- function invalidField(input) {
- 	input.removeClass('valid');
+FORM VALIDATION 
+*****************/
+function invalidField(input) {
 	input.addClass('invalid');
 	$('button[type=submit]').prop('disabled', true);
- }
- function validField(input){
- 	input.removeClass('invalid');
-	input.addClass('valid');
+}
+function validField(input){
+	input.removeClass('invalid');
 	$('button[type=submit]').prop('disabled', false);
- }
-
-//text input validation function
-function textInputValidate(textInput, regex) {
-	textInput.on('focusout', function(){
-		if(regex.test(textInput.val()) === false || textInput.val().length === 0) {
-			invalidField(textInput);
-		} else {
-			validField(textInput);
-		}
-	});
 }
 //Validate Name Field
-textInputValidate(firstText, regExpName);
+function nameValidate(){
+	const namePrompt = '<p id="namePrompt" style="color:red">Please enter your full name</p>';
+	if(regExpName.test(firstText.val()) === false || firstText.val().length === 0) {
+		$('#namePrompt').remove();
+		invalidField(firstText);
+		$(namePrompt).insertBefore(firstText);
+	} else if(regExpName.test(firstText.val()) != false || firstText.val().length > 0) {
+		validField(firstText);
+		$('#namePrompt').remove();
+	}
+}
 //Validate Email Field
-textInputValidate(emailText, emailRegExp);
-
+function emailValidate(){
+	const emailPrompt = '<p id="emailPrompt" style="color:red">Please enter a valid email address</p>';
+	if(emailRegExp.test(emailText.val()) === false || emailText.val().length === 0) {
+		$('#emailPrompt').remove();
+		invalidField(emailText);
+		$(emailPrompt).insertBefore(emailText);
+	} else if(emailRegExp.test(emailText.val()) != false || emailText.val().length > 0) {
+		validField(emailText);
+		$('#emailPrompt').remove();
+	}
+}
 //AT LEAST ONE CHECKBOX SELECTED
-
-//IF CREDITCARD
-function cardValidation() {
+function checkCheckboxChecked() {
+	const checkboxPrompt = '<p id="checkboxPrompt" style="color:red">Please tick at least one checkbox</p>'
+	if (allCheckBoxes.filter($('input:checked')).length === 0) {
+		$('#checkboxPrompt').remove();
+		$('button[type=submit]').prop('disabled', true);
+		$(checkboxPrompt).insertBefore('.activities');
+	} else if (allCheckBoxes.filter($('input:checked')).length > 0){
+		$('button[type=submit]').prop('disabled', false);
+		$('#checkboxPrompt').remove();
+	}
+}
+//CARD NUMBER BETWEEN 13 AND 16
+function cardNumberValidation() {
 	if (cardNumber.val().length < 13 || cardNumber.val().length > 16) {
 		invalidField(cardNumber);
 	} 
-	else {
+	else if (cardNumber.val().length >= 13 || cardNumber.val().length <= 16) {
 		validField(cardNumber);
 	}
 }
-	//ALL FIELDS FILLED OUT
-	//CARD NUMBER BETWEEN 13 AND 16
-	//ZIPCODE FIELD 5 DIGIT NUMBER
-	//CVV EXACTLY 3 DIGITS
+//ZIPCODE FIELD 5 DIGIT NUMBER
+function zipcodeValidation() {
+	if (zipCode.val().length != 5) {
+		invalidField(zipCode);
+	} 
+	else if (zipCode.val().length === 5) {
+		validField(zipCode);
+	}
+}	
+//CVV EXACTLY 3 DIGITS
+function cvvValidation() {
+	if (cvv.val().length != 3) {
+		invalidField(cvv);
+	} 
+	else if (cvv.val().length === 3) {
+		validField(cvv);
+	}
+}	
 
+//ALL FIELDS FILLED OUT
+
+function allFieldsFilled() {
+	if (emailText.val().length === 0) {
+		e.preventDefault();
+		emailValidate;
+	}
+}	
+
+
+//if payment val on select_method
 
 
 /******************************************
@@ -202,9 +243,7 @@ function cardValidation() {
  	otherText();
  	showHideColor();
  	showHidePayment();
- 	disableConflictingActivities();
- 	activitiesTotal();
- 	cardValidation();
+ 	
  });
 
 /********************************
@@ -217,17 +256,57 @@ function onChange(object, functionName) {
 		functionName();
 	});
 }
+
+//function to call functions on keyup
+function onFocusOut(object, functionName) {
+	object.on('focusout', function (e) {
+		functionName();
+	});
+}
+
 //functions to be performed when a change is detected on the form
 onChange(jobRoleSelect, otherText);
 onChange($('#design'), showHideColor);
 onChange($('#payment'), showHidePayment);
 onChange(allCheckBoxes, disableConflictingActivities);
 onChange(allCheckBoxes, activitiesTotal);
-onChange(cardNumber, cardValidation);
+onChange(allCheckBoxes, checkCheckboxChecked);
 
 
+//functions to be performed when a focusout is detected on the form
+onFocusOut(firstText, nameValidate);
+onFocusOut(emailText, emailValidate);
+onFocusOut(cardNumber, cardNumberValidation);
+onFocusOut(zipCode, zipcodeValidation);
+onFocusOut(cvv, cvvValidation);
 
-
+//functions to be performed before submit is allowed
+$('button').on('click', function(e){
+	$('#display-message').remove();
+	if (emailText.val().length === 0 || $('#design').val() === 'Select Theme'  ||  allCheckBoxes.filter($('input:checked')).length === 0 || $('#payment').val() === 'select_method' ){
+		let displayMessage = "<div id='display-message'>"
+		e.preventDefault();
+		if (emailText.val().length === 0 ){
+			displayMessage += '<p style="color:red;">Your email address is required.</p>';
+		}
+		if ($('#design').val() === 'Select Theme') {
+			displayMessage += '<p style="color:red;">You have not chosen a theme</p>';
+		}
+		if ( allCheckBoxes.filter($('input:checked')).length === 0 ) {
+			displayMessage += '<p style="color:red;">Choose at least 1 checkbox</p>';
+		}
+		if ($('#payment').val() === 'select_method' ) {
+			displayMessage += '<p style="color:red;">Please select a payment method</p>';
+		}
+		displayMessage += '</div>';
+		$(displayMessage).insertBefore('fieldset:first');
+		window.scroll({
+			top: 0, 
+			left: 0, 
+			behavior: 'smooth' 
+		});
+	}
+});
 
 
 
