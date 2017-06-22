@@ -259,7 +259,7 @@ function onChange(object, functionName) {
 
 //function to call functions on keyup
 function onFocusOut(object, functionName) {
-	object.on('focusout', function (e) {
+	object.on('focusout keyup', function (e) {
 		functionName();
 	});
 }
