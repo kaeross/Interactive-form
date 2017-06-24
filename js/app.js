@@ -198,41 +198,44 @@ function checkCheckboxChecked() {
 function cardNumberValidation() {
 	if (cardNumber.val().length < 13 || cardNumber.val().length > 16) {
 		invalidField(cardNumber);
+		return false;
 	} 
 	else if (cardNumber.val().length >= 13 || cardNumber.val().length <= 16) {
 		validField(cardNumber);
+		return true;
 	}
 }
 //ZIPCODE FIELD 5 DIGIT NUMBER
 function zipcodeValidation() {
 	if (zipCode.val().length != 5) {
 		invalidField(zipCode);
+		return false;
 	} 
 	else if (zipCode.val().length === 5) {
 		validField(zipCode);
+		return true;
 	}
 }	
 //CVV EXACTLY 3 DIGITS
 function cvvValidation() {
 	if (cvv.val().length != 3) {
 		invalidField(cvv);
+		return false;
 	} 
 	else if (cvv.val().length === 3) {
 		validField(cvv);
+		return true;
 	}
 }	
 
-//ALL FIELDS FILLED OUT
-
-function allFieldsFilled() {
-	if (emailText.val().length === 0) {
-		e.preventDefault();
-		emailValidate;
+function cardValidation() {
+	if (cardNumberValidation() === true && zipcodeValidation() === true && cvvValidation() === true || $('#payment').val() != "credit card")
+	{
+		return true;
+	} else {
+		return false;
 	}
-}	
-
-
-//if payment val on select_method
+}
 
 
 /******************************************
@@ -283,7 +286,7 @@ onFocusOut(cvv, cvvValidation);
 //functions to be performed before submit is allowed
 $('button').on('click', function(e){
 	$('#display-message').remove();
-	if (emailText.val().length === 0 || $('#design').val() === 'Select Theme'  ||  allCheckBoxes.filter($('input:checked')).length === 0 || $('#payment').val() === 'select_method' ){
+	if (emailText.val().length === 0 || $('#design').val() === 'Select Theme'  ||  allCheckBoxes.filter($('input:checked')).length === 0 || $('#payment').val() === 'select_method' || cardValidation() === false ){
 		let displayMessage = "<div id='display-message'>"
 		e.preventDefault();
 		if (emailText.val().length === 0 ){
@@ -297,6 +300,9 @@ $('button').on('click', function(e){
 		}
 		if ($('#payment').val() === 'select_method' ) {
 			displayMessage += '<p style="color:red;">Please select a payment method</p>';
+		}
+		if (cardValidation() === false) {
+			displayMessage += '<p style="color:red;">Please check your card details</p>';
 		}
 		displayMessage += '</div>';
 		$(displayMessage).insertBefore('fieldset:first');
