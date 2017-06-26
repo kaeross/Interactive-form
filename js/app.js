@@ -196,33 +196,33 @@ function checkCheckboxChecked() {
 }
 //CARD NUMBER BETWEEN 13 AND 16
 function cardNumberValidation() {
-	if (cardNumber.val().length < 13 || cardNumber.val().length > 16) {
+	if (cardNumber.val().length < 13 || cardNumber.val().length > 16 || isNaN(cardNumber.val()) ) {
 		invalidField(cardNumber);
 		return false;
 	} 
-	else if (cardNumber.val().length >= 13 || cardNumber.val().length <= 16) {
+	else if (cardNumber.val().length >= 13 && cardNumber.val().length <= 16 && isNaN(cardNumber.val()) === false ) {
 		validField(cardNumber);
 		return true;
 	}
 }
 //ZIPCODE FIELD 5 DIGIT NUMBER
 function zipcodeValidation() {
-	if (zipCode.val().length != 5) {
+	if (zipCode.val().length != 5 || isNaN(zipCode.val())) {
 		invalidField(zipCode);
 		return false;
 	} 
-	else if (zipCode.val().length === 5) {
+	else if (zipCode.val().length === 5 && isNaN(zipCode.val()) === false ) {
 		validField(zipCode);
 		return true;
 	}
 }	
 //CVV EXACTLY 3 DIGITS
 function cvvValidation() {
-	if (cvv.val().length != 3) {
+	if (cvv.val().length != 3 || isNaN(cvv.val())) {
 		invalidField(cvv);
 		return false;
 	} 
-	else if (cvv.val().length === 3) {
+	else if (cvv.val().length === 3 && isNaN(cvv.val()) === false) {
 		validField(cvv);
 		return true;
 	}
